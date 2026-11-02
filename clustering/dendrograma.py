@@ -22,8 +22,8 @@ def posiciones(uniones, n):
         y[orden[pos]] = 0.0
     for k in range(len(uniones)):
         a, b, d, t = uniones[k]
-        x[n + k] = (x[a] + x[b]) / 2
-        y[n + k] = d
+        x[n + k] = (x[a] + x[b]) / 2    # el grupo se dibuja en medio de sus dos hijos
+        y[n + k] = d     # a la altura de la distancia de unión
     return orden, x, y
 
 
@@ -62,7 +62,7 @@ def dibujar(uniones, etiquetas, titulo, k_colores=3, ruta=None):
         # dos lineas verticales desde cada hijo y una horizontal que las une
         ax.plot([y[a], d], [x[a], x[a]], color=c, linewidth=1.6)
         ax.plot([y[b], d], [x[b], x[b]], color=c, linewidth=1.6)
-        ax.plot([d, d], [x[a], x[b]], color=c, linewidth=1.6)
+        ax.plot([d, d], [x[a], x[b]], color=c, linewidth=1.6)   # línea que une los dos hijos
     ax.set_yticks(list(range(n)))
     ax.set_yticklabels([etiquetas[i] for i in orden], fontsize=8)
     ax.set_xlabel("Distancia (1 - similitud)")
