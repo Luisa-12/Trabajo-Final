@@ -43,7 +43,7 @@ def cargar_embeddings_minilm():
 def producto_punto(u, v):
     s = 0.0
     for i in range(len(u)):
-        s += u[i] * v[i]
+        s += u[i] * v[i]   # producto punto, componente por componente
     return s
 
 
@@ -56,13 +56,13 @@ def coseno(u, v):
     nv = norma(v)
     if nu == 0 or nv == 0:
         return 0.0
-    return producto_punto(u, v) / (nu * nv)
+    return producto_punto(u, v) / (nu * nv)    # coseno = punto / (largo A x largo B)
 
 
 def distancia_euclidiana(u, v):
     s = 0.0
     for i in range(len(u)):
-        s += (u[i] - v[i]) ** 2
+        s += (u[i] - v[i]) ** 2    # distancia euclidiana: suma de diferencias al cuadrado
     return math.sqrt(s)
 
 
@@ -84,15 +84,15 @@ def vector_promedio(texto):
         if palabra in vectores:
             v = vectores[palabra]
             for i in range(dim):
-                suma[i] += v[i]
+                suma[i] += v[i]     # sumo el vector de cada palabra
             usadas.append(palabra)
         else:
-            sin_vector.append(palabra)
+            sin_vector.append(palabra)   # palabra que el modelo no conoce (ej. chatgpt)
     if len(usadas) == 0:
         return suma, usadas, sin_vector
     promedio = []
     for i in range(dim):
-        promedio.append(suma[i] / len(usadas))
+        promedio.append(suma[i] / len(usadas))  # vector del abstract = promedio de sus palabras
     return promedio, usadas, sin_vector
 
 
@@ -108,6 +108,6 @@ def embedding_minilm(id_articulo):
 
 
 def similitud_minilm(id_a, id_b):
-    ea = embedding_minilm(id_a)
+    ea = embedding_minilm(id_a)  # vector de Sentence-BERT ya calculado
     eb = embedding_minilm(id_b)
-    return coseno(ea, eb), distancia_euclidiana(ea, eb)
+    return coseno(ea, eb), distancia_euclidiana(ea, eb)   # similitud y distancia entre los dos abstracts
