@@ -75,26 +75,26 @@ def needleman_wunsch(a, b, coincidencia=1, diferencia=-1, hueco=-1):
     for i in range(n + 1):
         F.append([0] * (m + 1))
     for i in range(n + 1):
-        F[i][0] = i * hueco
+        F[i][0] = i * hueco   # primera columna: puros huecos
     for j in range(m + 1):
-        F[0][j] = j * hueco
+        F[0][j] = j * hueco   # primera fila: puros huecos
     for i in range(1, n + 1):
         for j in range(1, m + 1):
             if a[i - 1] == b[j - 1]:
                 s = coincidencia
             else:
                 s = diferencia
-            diagonal = F[i - 1][j - 1] + s
+            diagonal = F[i - 1][j - 1] + s   # alinear las dos palabras (+1 o -1)
             arriba = F[i - 1][j] + hueco      # hueco en b
             izquierda = F[i][j - 1] + hueco   # hueco en a
-            F[i][j] = max(diagonal, arriba, izquierda)
+            F[i][j] = max(diagonal, arriba, izquierda)   # me quedo con el mejor puntaje
 
     # reconstruccion del alineamiento (traceback) desde la esquina inferior
     al_a = []
     al_b = []
     i = n
     j = m
-    while i > 0 or j > 0:
+    while i > 0 or j > 0:    # traceback: recorro la tabla desde el final
         if i > 0 and j > 0:
             s = coincidencia if a[i - 1] == b[j - 1] else diferencia
             if F[i][j] == F[i - 1][j - 1] + s:
@@ -111,7 +111,7 @@ def needleman_wunsch(a, b, coincidencia=1, diferencia=-1, hueco=-1):
             al_a.append("-")
             al_b.append(b[j - 1])
             j -= 1
-    al_a.reverse()
+    al_a.reverse()   # lo armé al revés, así que lo volteo
     al_b.reverse()
     return F[n][m], F, al_a, al_b
 
@@ -124,8 +124,8 @@ def similitud_needleman_wunsch(a, b):
     coincidencias = 0
     for k in range(len(al_a)):
         if al_a[k] == al_b[k]:
-            coincidencias += 1
-    return coincidencias / len(al_a)
+            coincidencias += 1   # palabra igual en la misma posición
+    return coincidencias / len(al_a) # similitud = iguales / largo del alineamiento
 
 
 # ---------------------------------------------------------------------------
