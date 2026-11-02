@@ -38,7 +38,6 @@ def medir(funcion, *args, repeticiones=None):
         tiempos.append((time.perf_counter() - inicio) * 1000)
     return estadisticas(tiempos), resultado
 
-
 def preprocesar_rk(patron):
     h = 1
     for _ in range(len(patron) - 1):
