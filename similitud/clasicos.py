@@ -24,20 +24,20 @@ def levenshtein(a, b):
         D.append(fila)
     # caso base: transformar en/desde la secuencia vacia
     for i in range(n + 1):
-        D[i][0] = i
+        D[i][0] = i     # primera columna: borrar i palabras
     for j in range(m + 1):
-        D[0][j] = j
+        D[0][j] = j     # primera fila: insertar j palabras
     for i in range(1, n + 1):
         for j in range(1, m + 1):
             if a[i - 1] == b[j - 1]:
                 costo = 0
             else:
                 costo = 1
-            eliminar = D[i - 1][j] + 1
-            insertar = D[i][j - 1] + 1
-            sustituir = D[i - 1][j - 1] + costo
-            D[i][j] = min(eliminar, insertar, sustituir)
-    return D[n][m], D
+            eliminar = D[i - 1][j] + 1   # vecina de arriba: borrar
+            insertar = D[i][j - 1] + 1   # vecina de la izquierda: insertar
+            sustituir = D[i - 1][j - 1] + costo   # diagonal: igual (0) o sustituir (1)
+            D[i][j] = min(eliminar, insertar, sustituir)   # me quedo con la opción más barata
+    return D[n][m], D    # la respuesta está en la última celda
 
 
 def levenshtein_distancia(a, b):
