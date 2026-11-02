@@ -135,7 +135,7 @@ def frecuencias(terminos):
     tf = {}
     for t in terminos:
         if t in tf:
-            tf[t] += 1
+            tf[t] += 1     # cuento cuántas veces aparece cada palabra   
         else:
             tf[t] = 1
     return tf
@@ -148,10 +148,10 @@ def calcular_idf(documentos):
     for doc in documentos:
         vistos = set(doc)
         for t in vistos:
-            df[t] = df.get(t, 0) + 1
+            df[t] = df.get(t, 0) + 1   # en cuántos abstracts aparece la palabra
     idf = {}
     for t in df:
-        idf[t] = math.log(N / df[t])
+        idf[t] = math.log(N / df[t])   # IDF: palabra rara pesa más, palabra común pesa casi 0
     return idf, df
 
 
@@ -161,7 +161,7 @@ def vector_tfidf(terminos, idf):
     total = len(terminos)
     vec = {}
     for t in tf:
-        vec[t] = (tf[t] / total) * idf.get(t, 0.0)
+        vec[t] = (tf[t] / total) * idf.get(t, 0.0)    # peso final = TF x IDF
     return vec
 
 
@@ -170,16 +170,16 @@ def coseno_dispersos(v1, v2):
     producto = 0.0
     for t in v1:
         if t in v2:
-            producto += v1[t] * v2[t]
+            producto += v1[t] * v2[t]     # producto punto: solo palabras que están en ambos
     norma1 = 0.0
     for t in v1:
-        norma1 += v1[t] * v1[t]
+        norma1 += v1[t] * v1[t]    # largo del vector A (al cuadrado)
     norma2 = 0.0
     for t in v2:
-        norma2 += v2[t] * v2[t]
+        norma2 += v2[t] * v2[t]     # largo del vector B (al cuadrado)
     if norma1 == 0 or norma2 == 0:
         return 0.0
-    return producto / (math.sqrt(norma1) * math.sqrt(norma2))
+    return producto / (math.sqrt(norma1) * math.sqrt(norma2))    # coseno del ángulo entre los dos vectores
 
 
 def similitud_coseno_tfidf(terminos_a, terminos_b, idf):
@@ -195,8 +195,8 @@ def jaccard(terminos_a, terminos_b):
     interseccion = 0
     for t in A:
         if t in B:
-            interseccion += 1
-    union = len(A) + len(B) - interseccion
+            interseccion += 1   # Jaccard: palabra que está en los dos conjuntos
+    union = len(A) + len(B) - interseccion     # unión sin contar dos veces las comunes
     if union == 0:
         return 1.0
-    return interseccion / union
+    return interseccion / union   # comunes / totales
