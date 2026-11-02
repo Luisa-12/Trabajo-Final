@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block titulo %}Artículo {{ art.id }}{% endblock %}
+{% block contenido %}
+<p><a href="{{ url_for('inicio') }}">← Volver al corpus</a></p>
+<h2>{{ art.id }}. {{ art.titulo }}</h2>
+<p><strong>Autores:</strong> {{ art.autores | join(', ') }}<br>
+<strong>Publicación:</strong> {{ art.revista }} ({{ art.anio }})<br>
+<span class="nota">Archivo: {{ art.archivo }}</span></p>
+<div class="panel">
+  <h3 style="margin-top:0">Abstract extraído</h3>
+  <p>{{ art.abstract }}</p>
+</div>
+<div class="panel">
+  <h3 style="margin-top:0">Abstract preprocesado ({{ terminos | length }} términos)</h3>
+  <p class="nota">Minúsculas → tokenización → eliminación de stopwords → normalización de plurales (S-stemmer).</p>
+  <p class="mono">{{ terminos | join(' ') }}</p>
+</div>
+{% endblock %}

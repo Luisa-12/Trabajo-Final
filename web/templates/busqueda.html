@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block titulo %}Búsqueda de patrones{% endblock %}
+{% block contenido %}
+<h2>Requerimiento 3 · Búsqueda exacta de patrones</h2>
+<form method="post" class="panel">
+  <p>Patrón a buscar en los 20 abstracts:</p>
+  <input type="text" name="patron" value="{{ patron }}" placeholder="ej. artificial intelligence" required>
+  <label><input type="checkbox" name="mayusculas" value="si" {{ 'checked' if mayusculas }}> Distinguir mayúsculas</label>
+  <input type="submit" value="Buscar">
+</form>
+
+{% if resumen %}
+<div class="panel">
+  <h3 style="margin-top:0">Resumen por algoritmo</h3>
+  <table>
+    <tr><th>Algoritmo</th><th class="num">Ocurrencias</th><th class="num">Comparaciones de caracteres</th><th class="num">Tiempo total (ms)</th></tr>
+    <tr><td>Knuth-Morris-Pratt</td><td class="num">{{ resumen.kmp.ocurrencias }}</td><td class="num">{{ resumen.kmp.comparaciones }}</td><td class="num">{{ '%.3f' % resumen.kmp.tiempo_ms }}</td></tr>
+    <tr><td>Boyer-Moore</td><td class="num">{{ resumen.boyer_moore.ocurrencias }}</td><td class="num">{{ resumen.boyer_moore.comparaciones }}</td><td class="num">{{ '%.3f' % resumen.boyer_moore.tiempo_ms }}</td></tr>
+    <tr><td>Rabin-Karp</td><td class="num">{{ resumen.rabin_karp.ocurrencias }}</td><td class="num">{{ resumen.rabin_karp.comparaciones }}</td><td class="num">{{ '%.3f' % resumen.rabin_karp.tiempo_ms }}</td></tr>
+  </table>
+  <p class="nota">Rabin-Karp solo compara caracteres cuando el hash de la ventana coincide con el del patrón.</p>
+</div>
+
+{% if demo %}
+<div class="panel tabla-scroll">
+  <h3 style="margin-top:0">Estructuras auxiliares para el patrón</h3>
+  <p><strong>KMP · tabla de prefijos π</strong></p>
+  <table class="matriz">
+    <tr><th>j</th>{% for c in demo.patron %}<th>{{ loop.index0 }}</th>{% endfor %}</tr>
+    <tr><th>P[j]</th>{% for c in demo.patron %}<td>{{ '␣' if c == ' ' else c }}</td>{% endfor %}</tr>
+    <tr><th>π[j]</th>{% for v in demo.pi %}<td>{{ v }}</td>{% endfor %}</tr>
+  </table>
+  <p><strong>Boyer-Moore · carácter malo</strong> (última posición de cada carácter; si no está, −1)</p>
+  <table class="matriz">
+    <tr>{% for c, v in demo.malo %}<th>{{ '␣' if c == ' ' else c }}</th>{% endfor %}</tr>
+    <tr>{% for c, v in demo.malo %}<td>{{ v }}</td>{% endfor %}</tr>
+  </table>
+  <p><strong>Boyer-Moore · sufijo bueno</strong> (desplazamiento si coincidió P[j..m−1] y falló en j−1)</p>
+  <table class="matriz">
+    <tr><th>j</th>{% for v in demo.sufijo %}<th>{{ loop.index0 }}</th>{% endfor %}</tr>
+    <tr><th>desp.</th>{% for v in demo.sufijo %}<td>{{ v }}</td>{% endfor %}</tr>
+  </table>
+  <p><strong>Rabin-Karp</strong> · hash del patrón (d = 256, q = 1 000 000 007): <code>{{ demo.hash }}</code></p>
+</div>
+{% endif %}
+
+<div class="panel">
+  <h3 style="margin-top:0">Ocurrencias por artículo ({{ coincidencias | length }} artículos)</h3>
+  {% for c in coincidencias %}
+  <div style="margin-bottom:14px">
+    <strong>{{ c.articulo.id }}. {{ c.articulo.titulo }}</strong> — {{ c.posiciones | length }} ocurrencia(s)<br>
+    <span class="nota">{{ c.articulo.autores | join(', ') }} ({{ c.articulo.anio }}) · posiciones: {{ c.posiciones | join(', ') }}</span>
+    {% for antes, centro, despues in c.fragmentos[:5] %}
+    <div class="fragmento">…{{ antes }}<mark>{{ centro }}</mark>{{ despues }}…</div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p>No se encontraron ocurrencias.</p>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

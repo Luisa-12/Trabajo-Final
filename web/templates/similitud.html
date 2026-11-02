@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block titulo %}Similitud{% endblock %}
+{% block contenido %}
+<h2>Requerimiento 1 · Similitud textual</h2>
+<p class="nota">Seleccione dos o más artículos. Se comparan todos los pares con 4 algoritmos clásicos y 2 modelos basados en embeddings.</p>
+
+<form method="post" class="panel">
+  <div class="lista-articulos">
+    {% for a in corpus %}
+    <label><input type="checkbox" name="articulos" value="{{ a.id }}" {{ 'checked' if a.id in seleccion }}> {{ a.id }}. {{ a.titulo }}</label>
+    {% endfor %}
+  </div>
+  <p>Palabras para mostrar las matrices de programación dinámica:
+    <input type="number" name="n_palabras" value="{{ n_palabras }}" min="3" max="15" style="width:70px">
+    <input type="submit" value="Comparar">
+  </p>
+</form>
+
+{% if seleccion and seleccion|length < 2 %}
+<p class="panel">Seleccione al menos dos artículos.</p>
+{% endif %}
+
+{% for p in pares %}
+<div class="panel">
+  <h3 style="margin-top:0">Artículo {{ p.a.id }} vs artículo {{ p.b.id }}</h3>
+  <p class="nota">{{ p.a.titulo }}<br>{{ p.b.titulo }}</p>
+  {% if p.autores_comunes %}<p><strong>Autores en común:</strong> {{ p.autores_comunes | join(', ') }}</p>{% endif %}
+  <div class="tabla-scroll">
+  <table>
+    <tr><th>Algoritmo</th><th>Tipo</th><th class="num">Similitud</th><th style="width:35%"></th><th class="num">Dist. euclidiana</th><th class="num">Tiempo (ms)</th></tr>
+    {% for clave, nombre, tipo in nombres %}
+    {% set r = p.res[clave] %}
+    <tr>
+      <td>{{ nombre }}</td>
+      <td><span class="etiqueta {{ tipo }}">{{ 'IA' if tipo == 'ia' else 'Clásico' }}</span></td>
+      <td class="num">{{ '%.4f' % r.similitud }}</td>
+      <td><div class="barra {{ tipo }}" style="width: {{ (r.similitud * 100) | round(1) }}%"></div></td>
+      <td class="num">{{ '%.4f' % r.distancia if r.distancia is defined else '-' }}</td>
+      <td class="num">{{ '%.2f' % r.tiempo_ms }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  </div>
+</div>
+{% endfor %}
+
+{% if matrices %}
+<div class="panel">
+  <h3 style="margin-top:0">Demostración: matrices de programación dinámica</h3>
+  <p class="nota">Primeras {{ matrices.a|length }} palabras preprocesadas del artículo {{ matrices.id_a }} (filas) y del artículo {{ matrices.id_b }} (columnas).</p>
+  <div>
+    <div class="tabla-scroll">
+      <p><strong>Levenshtein</strong> · distancia = {{ matrices.dist }}</p>
+      <table class="matriz">
+        <tr><th></th><th>ε</th>{% for w in matrices.b %}<th>{{ w }}</th>{% endfor %}</tr>
+        {% for i in range(matrices.lev|length) %}
+        <tr><th>{{ 'ε' if i == 0 else matrices.a[i-1] }}</th>
+          {% for v in matrices.lev[i] %}<td>{{ v }}</td>{% endfor %}</tr>
+        {% endfor %}
+      </table>
+    </div>
+    <div class="tabla-scroll">
+      <p><strong>Needleman-Wunsch</strong> (coincidencia +1, diferencia −1, hueco −1) · puntaje = {{ matrices.puntaje }}</p>
+      <table class="matriz">
+        <tr><th></th><th>ε</th>{% for w in matrices.b %}<th>{{ w }}</th>{% endfor %}</tr>
+        {% for i in range(matrices.nw|length) %}
+        <tr><th>{{ 'ε' if i == 0 else matrices.a[i-1] }}</th>
+          {% for v in matrices.nw[i] %}<td>{{ v }}</td>{% endfor %}</tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+  <p><strong>Alineamiento obtenido:</strong></p>
+  <div class="tabla-scroll"><table class="matriz">
+    <tr>{% for w in matrices.al_a %}<td>{{ w }}</td>{% endfor %}</tr>
+    <tr>{% for w in matrices.al_b %}<td>{{ w }}</td>{% endfor %}</tr>
+  </table></div>
+</div>
+{% endif %}
+{% endblock %}

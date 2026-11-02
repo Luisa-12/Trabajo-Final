@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block titulo %}Clustering{% endblock %}
+{% block contenido %}
+<h2>Requerimiento 2 · Agrupamiento jerárquico</h2>
+<form method="get" class="panel">
+  Representación de los abstracts:
+  <select name="representacion">
+    <option value="tfidf" {{ 'selected' if representacion == 'tfidf' }}>TF-IDF + coseno (clásico)</option>
+    <option value="minilm" {{ 'selected' if representacion == 'minilm' }}>Sentence-BERT (embeddings)</option>
+  </select>
+  <input type="submit" value="Calcular">
+  <p class="nota">Distancia entre abstracts = 1 − similitud del coseno. Los tres criterios se implementaron desde cero con la fórmula de Lance-Williams.</p>
+</form>
+
+<div class="panel">
+  <h3 style="margin-top:0">Evaluación interna</h3>
+  <p class="nota"><strong>CCC</strong>: coeficiente de correlación cofenética (qué tan bien conserva el dendrograma las distancias originales; 1 es perfecto).
+  <strong>Silueta</strong>: cohesión y separación de los grupos al cortar el árbol en k grupos (de −1 a 1).</p>
+  <div class="tabla-scroll">
+  <table>
+    <tr><th>Criterio</th><th class="num">CCC</th>
+      {% for k in resultados[0].eval.silueta %}<th class="num">Silueta k={{ k }}</th>{% endfor %}
+      <th>Tamaños con k=3</th></tr>
+    {% for r in resultados %}
+    <tr {% if r.titulo == mejor %}style="background:#ecfdf5"{% endif %}>
+      <td>{{ r.titulo }}{% if r.titulo == mejor %} <span class="etiqueta ia">mayor CCC</span>{% endif %}</td>
+      <td class="num">{{ '%.4f' % r.eval.ccc }}</td>
+      {% for k, v in r.eval.silueta.items() %}<td class="num">{{ '%.4f' % v }}</td>{% endfor %}
+      <td>{{ r.eval.tamanos[3] | join(' / ') }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  </div>
+</div>
+
+{% for r in resultados %}
+<div class="panel">
+  <h3 style="margin-top:0">{{ r.titulo }}</h3>
+  <img class="grafica" src="data:image/png;base64,{{ r.imagen }}" alt="Dendrograma {{ r.titulo }}">
+  <p class="nota">Grupos al cortar en k = 3:
+    {% for g in r.grupos %}{ {{ g | join(', ') }} }{% if not loop.last %} · {% endif %}{% endfor %}</p>
+</div>
+{% endfor %}
+{% endblock %}

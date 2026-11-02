@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block titulo %}Rendimiento{% endblock %}
+{% block contenido %}
+<h2>Requerimiento 3 · Rendimiento observado</h2>
+<form method="post" class="panel">
+  Patrón: <input type="text" name="patron" value="{{ patron }}" style="max-width:300px">
+  Repetir el corpus: <input type="number" name="repetir" value="{{ repetir }}" min="1" max="10" style="width:70px"> veces
+  <input type="submit" value="Medir">
+  <p class="nota">Texto analizado: los 20 abstracts en minúsculas (n = {{ n }} caracteres). Cada medición es el menor tiempo de 5 ejecuciones.</p>
+</form>
+<div class="panel tabla-scroll">
+<table>
+  <tr><th>Algoritmo</th><th class="num">Preprocesamiento (ms)</th><th class="num">Búsqueda (ms)</th><th class="num">Total (ms)</th><th class="num">Comparaciones</th><th class="num">Ocurrencias</th><th class="num">Colisiones</th></tr>
+  {% for f in filas %}
+  <tr><td>{{ f.algoritmo }}</td>
+    <td class="num">{{ '%.4f' % f.preprocesamiento_ms }}</td>
+    <td class="num">{{ '%.3f' % f.busqueda_ms }}</td>
+    <td class="num">{{ '%.3f' % f.total_ms }}</td>
+    <td class="num">{{ f.comparaciones }}</td>
+    <td class="num">{{ f.ocurrencias }}</td>
+    <td class="num">{{ f.colisiones if f.colisiones is not none else '-' }}</td></tr>
+  {% endfor %}
+</table>
+</div>
+<div class="panel">
+  <h3 style="margin-top:0">Complejidad teórica</h3>
+  <table>
+    <tr><th>Algoritmo</th><th>Preprocesamiento</th><th>Búsqueda (peor caso)</th><th>Búsqueda (caso típico)</th></tr>
+    <tr><td>KMP</td><td>Θ(m)</td><td>Θ(n)</td><td>Θ(n)</td></tr>
+    <tr><td>Boyer-Moore</td><td>Θ(m + |Σ|)</td><td>O(n·m)</td><td>sublineal, ≈ O(n/m)</td></tr>
+    <tr><td>Rabin-Karp</td><td>Θ(m)</td><td>O(n·m)</td><td>O(n + m)</td></tr>
+  </table>
+</div>
+{% endblock %}

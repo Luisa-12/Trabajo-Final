@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block titulo %}Paso a paso{% endblock %}
+{% block contenido %}
+<h2>Requerimiento 3 · Ejecución paso a paso</h2>
+<form method="post" class="panel">
+  <p>Texto (máx. 400 caracteres):</p>
+  <textarea name="texto" rows="3">{{ texto }}</textarea>
+  <p>Patrón: <input type="text" name="patron" value="{{ patron }}" style="max-width:240px">
+     Primo q para Rabin-Karp: <input type="number" name="primo" value="{{ primo }}" min="2" style="width:110px">
+     <input type="submit" value="Ejecutar"></p>
+  <p class="nota">Con un primo pequeño (por ejemplo 13) aparecen colisiones de hash en Rabin-Karp.</p>
+</form>
+
+<div class="panel tabla-scroll">
+  <h3 style="margin-top:0">Knuth-Morris-Pratt · {{ kmp[0]|length }} ocurrencia(s) · {{ kmp[1] }} comparaciones</h3>
+  <table class="matriz">
+    <tr><th>j</th>{% for c in patron %}<th>{{ loop.index0 }}</th>{% endfor %}</tr>
+    <tr><th>P[j]</th>{% for c in patron %}<td>{{ '␣' if c == ' ' else c }}</td>{% endfor %}</tr>
+    <tr><th>π[j]</th>{% for v in pi %}<td>{{ v }}</td>{% endfor %}</tr>
+  </table>
+  <table style="margin-top:10px">
+    <tr><th class="num">i</th><th class="num">q</th><th>Acción</th></tr>
+    {% for p in kmp[2] %}<tr><td class="num">{{ p.i }}</td><td class="num">{{ p.q }}</td><td class="paso">{{ p.accion }}</td></tr>{% endfor %}
+  </table>
+</div>
+
+<div class="panel tabla-scroll">
+  <h3 style="margin-top:0">Boyer-Moore · {{ bm[0]|length }} ocurrencia(s) · {{ bm[1] }} comparaciones</h3>
+  <table class="matriz">
+    <tr>{% for c, v in malo %}<th>{{ '␣' if c == ' ' else c }}</th>{% endfor %}</tr>
+    <tr>{% for c, v in malo %}<td>{{ v }}</td>{% endfor %}</tr>
+  </table>
+  <table class="matriz" style="margin-top:6px">
+    <tr><th>j</th>{% for v in sufijo %}<th>{{ loop.index0 }}</th>{% endfor %}</tr>
+    <tr><th>sufijo</th>{% for v in sufijo %}<td>{{ v }}</td>{% endfor %}</tr>
+  </table>
+  <table style="margin-top:10px">
+    <tr><th class="num">s</th><th>Alineación</th><th>Acción</th></tr>
+    {% for p in bm[2] %}
+    <tr><td class="num">{{ p.s }}</td>
+      <td class="paso">{{ texto[p.s:p.s + patron|length] }}
+{{ patron }}</td>
+      <td class="paso">{{ p.accion }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+
+<div class="panel tabla-scroll">
+  <h3 style="margin-top:0">Rabin-Karp (q = {{ primo }}) · {{ rk[0]|length }} ocurrencia(s) · {{ rk[3] }} colisión(es) · {{ rk[1] }} comparaciones</h3>
+  <table>
+    <tr><th class="num">s</th><th>Ventana</th><th class="num">hash</th><th>Resultado</th></tr>
+    {% for p in rk[2] %}
+    <tr {% if 'COLISION' in p.accion %}style="background:#fef2f2"{% elif 'OCURRENCIA' in p.accion %}style="background:#ecfdf5"{% endif %}>
+      <td class="num">{{ p.s }}</td><td class="paso">{{ texto[p.s:p.s + patron|length] }}</td>
+      <td class="num">{{ p.hash }}</td><td>{{ p.accion }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

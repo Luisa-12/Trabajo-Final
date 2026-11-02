@@ -1,0 +1,26 @@
+flowchart LR
+  subgraph Datos["Capa de datos"]
+    PDF["20 PDF<br/>datos/pdfs"] --> EXT["extraccion/<br/>extractor_pdf.py"]
+    META["metadatos.json<br/>titulo, autores"] --> CORP
+    EXT --> CORP["corpus.json"]
+    EMB["embeddings_minilm.json<br/>vectores_palabras.json"]
+  end
+  subgraph Logica["Capa de algoritmos"]
+    PRE["preprocesamiento.py<br/>tokens, stopwords, S-stemmer"]
+    SIM["similitud/<br/>clasicos.py · ia.py"]
+    CLU["clustering/<br/>jerarquico.py · dendrograma.py"]
+    BUS["busqueda/<br/>kmp · boyer_moore · rabin_karp"]
+  end
+  subgraph Web["Capa de presentacion"]
+    APP["app.py (Flask)"] --> TPL["web/templates<br/>HTML + CSS"]
+  end
+  CORP --> PRE
+  PRE --> SIM
+  PRE --> CLU
+  EMB --> SIM
+  SIM --> CLU
+  CORP --> BUS
+  SIM --> APP
+  CLU --> APP
+  BUS --> APP
+  SCR["scripts/<br/>generar_embeddings.py"] -.-> EMB

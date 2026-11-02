@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Bibliometría{% endblock %} - Análisis de Algoritmos</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+</head>
+<body>
+<header>
+  <h1>Análisis de algoritmos en el contexto de la bibliometría</h1>
+  <p>Universidad del Quindío · Ingeniería de Sistemas y Computación · Corpus: 20 artículos sobre IA en educación</p>
+</header>
+<nav>
+  <a href="{{ url_for('inicio') }}" class="{{ 'activo' if request.endpoint in ['inicio', 'articulo'] }}">Corpus</a>
+  <a href="{{ url_for('similitud') }}" class="{{ 'activo' if request.endpoint == 'similitud' }}">R1 · Similitud</a>
+  <a href="{{ url_for('clustering') }}" class="{{ 'activo' if request.endpoint == 'clustering' }}">R2 · Clustering</a>
+  <a href="{{ url_for('busqueda') }}" class="{{ 'activo' if request.endpoint == 'busqueda' }}">R3 · Búsqueda</a>
+  <a href="{{ url_for('traza') }}" class="{{ 'activo' if request.endpoint == 'traza' }}">R3 · Paso a paso</a>
+  <a href="{{ url_for('rendimiento') }}" class="{{ 'activo' if request.endpoint == 'rendimiento' }}">R3 · Rendimiento</a>
+</nav>
+<main>
+{% block contenido %}{% endblock %}
+</main>
+</body>
+</html>

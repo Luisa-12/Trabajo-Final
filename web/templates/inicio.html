@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titulo %}Corpus{% endblock %}
+{% block contenido %}
+<h2>Corpus documental</h2>
+<p class="nota">Los 20 artículos fueron entregados en PDF. De cada uno se extrajo el abstract (con <code>extraccion/extractor_pdf.py</code>), el título y los autores. Haga clic en un título para ver el abstract y su preprocesamiento.</p>
+<div class="panel tabla-scroll">
+<table>
+  <tr><th class="num">#</th><th>Título</th><th>Autores</th><th class="num">Año</th><th class="num">Palabras del abstract</th></tr>
+  {% for a in corpus %}
+  <tr>
+    <td class="num">{{ a.id }}</td>
+    <td><a href="{{ url_for('articulo', id_articulo=a.id) }}">{{ a.titulo }}</a><br><span class="nota">{{ a.revista }}</span></td>
+    <td>{{ a.autores | join(', ') }}</td>
+    <td class="num">{{ a.anio }}</td>
+    <td class="num">{{ a.abstract.split() | length }}</td>
+  </tr>
+  {% endfor %}
+</table>
+</div>
+{% endblock %}
