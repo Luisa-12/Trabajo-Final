@@ -30,15 +30,16 @@ def buscar(texto, patron, d=BASE, q=PRIMO, traza=False):
     # h = d^(m-1) mod q, para quitar el primer caracter de la ventana
     h = 1
     for _ in range(m - 1):
-        h = (h * d) % q
+        h = (h * d) % q    # peso de la letra que sale de la ventana
     hp = 0
     ht = 0
     for i in range(m):
-        hp = (d * hp + ord(patron[i])) % q
+        hp = (d * hp + ord(patron[i])) % q      # convierto el patrón en un número
         ht = (d * ht + ord(texto[i])) % q
     comparaciones = 0
     for s in range(n - m + 1):
-        if hp == ht:
+        if hp == ht:    # solo si los números coinciden reviso las letras
+        if hp == ht:    
             # verificacion caracter a caracter
             iguales = True
             for j in range(m):
@@ -50,12 +51,12 @@ def buscar(texto, patron, d=BASE, q=PRIMO, traza=False):
                 posiciones.append(s)
                 if traza:
                     pasos.append({"s": s, "hash": ht, "accion": "hash igual y verificado: OCURRENCIA"})
-            else:
+            else:      # mismo número pero distinto texto: colisión
                 colisiones += 1
                 if traza:
                     pasos.append({"s": s, "hash": ht, "accion": "hash igual pero texto distinto: COLISION"})
         elif traza:
             pasos.append({"s": s, "hash": ht, "accion": "hash distinto"})
-        if s < n - m:
+        if s < n - m:                                                     # hash rodante: quito la letra que sale y sumo la que entra
             ht = (d * (ht - ord(texto[s]) * h) + ord(texto[s + m])) % q
     return posiciones, comparaciones, pasos, colisiones
