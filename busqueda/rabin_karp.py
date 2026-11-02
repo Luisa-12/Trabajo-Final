@@ -39,8 +39,7 @@ def buscar(texto, patron, d=BASE, q=PRIMO, traza=False):
     comparaciones = 0
     for s in range(n - m + 1):
         if hp == ht:    # solo si los números coinciden reviso las letras
-        if hp == ht:    
-            # verificacion caracter a caracter
+    
             iguales = True
             for j in range(m):
                 comparaciones += 1
@@ -51,12 +50,12 @@ def buscar(texto, patron, d=BASE, q=PRIMO, traza=False):
                 posiciones.append(s)
                 if traza:
                     pasos.append({"s": s, "hash": ht, "accion": "hash igual y verificado: OCURRENCIA"})
-            else:      # mismo número pero distinto texto: colisión
-                colisiones += 1
+            else:
+                colisiones += 1   # mismo número pero distinto texto: colisión
                 if traza:
                     pasos.append({"s": s, "hash": ht, "accion": "hash igual pero texto distinto: COLISION"})
         elif traza:
             pasos.append({"s": s, "hash": ht, "accion": "hash distinto"})
-        if s < n - m:                                                     # hash rodante: quito la letra que sale y sumo la que entra
-            ht = (d * (ht - ord(texto[s]) * h) + ord(texto[s + m])) % q
+        if s < n - m:
+            ht = (d * (ht - ord(texto[s]) * h) + ord(texto[s + m])) % q   # hash rodante: quito la letra que sale y sumo la que entra
     return posiciones, comparaciones, pasos, colisiones
