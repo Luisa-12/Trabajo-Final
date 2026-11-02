@@ -11,7 +11,7 @@ def tabla_caracter_malo(patron):
     """ultima[c] = ultima posicion del caracter c en el patron."""
     ultima = {}
     for i in range(len(patron)):
-        ultima[patron[i]] = i
+        ultima[patron[i]] = i       # guardo la última posición de cada letra del patrón
     return ultima
 
 
@@ -60,7 +60,7 @@ def buscar(texto, patron, traza=False):
         j = m - 1
         while j >= 0:
             comparaciones += 1
-            if patron[j] != texto[s + j]:
+            if patron[j] != texto[s + j]:     # comparo de derecha a izquierda
                 break
             j -= 1
         if j < 0:
@@ -71,9 +71,9 @@ def buscar(texto, patron, traza=False):
             s += salto
         else:
             c = texto[s + j]
-            salto_malo = j - ultima.get(c, -1)
-            salto_bueno = sufijo[j + 1]
-            salto = max(salto_malo, salto_bueno, 1)
+            salto_malo = j - ultima.get(c, -1)    # regla del carácter malo
+            salto_bueno = sufijo[j + 1]           # regla del sufijo bueno
+            salto = max(salto_malo, salto_bueno, 1)    # avanzo lo máximo que permitan las dos reglas
             if traza:
                 pasos.append({"s": s, "j": j, "accion": "falla en j=%d ('%s' vs '%s'): caracter malo=%d, sufijo bueno=%d -> desplaza %d"
                               % (j, patron[j], c, salto_malo, salto_bueno, salto)})
