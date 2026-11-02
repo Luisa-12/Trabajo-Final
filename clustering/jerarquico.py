@@ -26,7 +26,7 @@ def matriz_distancias_tfidf(corpus):
     D = [[0.0] * n for _ in range(n)]
     for i in range(n):
         for j in range(i + 1, n):
-            d = 1 - clasicos.coseno_dispersos(vectores[i], vectores[j])
+            d = 1 - clasicos.coseno_dispersos(vectores[i], vectores[j])  # distancia = 1 - similitud
             D[i][j] = d
             D[j][i] = d
     return D
@@ -46,11 +46,11 @@ def matriz_distancias_minilm(corpus):
 # ----------------------------- algoritmo aglomerativo -----------------------------
 def nueva_distancia(metodo, d_ki, d_kj, tam_i, tam_j):
     if metodo == "single":
-        return min(d_ki, d_kj)
+        return min(d_ki, d_kj)  # single: el par más cercano
     if metodo == "complete":
-        return max(d_ki, d_kj)
+        return max(d_ki, d_kj)   # complete: el par más lejano
     if metodo == "average":
-        return (tam_i * d_ki + tam_j * d_kj) / (tam_i + tam_j)
+        return (tam_i * d_ki + tam_j * d_kj) / (tam_i + tam_j)  # average: promedio según el tamaño de cada grupo
     raise ValueError("metodo desconocido: " + metodo)
 
 
@@ -80,23 +80,23 @@ def aglomerativo(D, metodo):
                 a = activos[x]
                 b = activos[y]
                 d = dist[(min(a, b), max(a, b))]
-                if d < mejor_d:
+                if d < mejor_d:   # busco los dos grupos más cercanos
                     mejor_d = d
                     mejor = (a, b)
         a, b = mejor
         # 2) crear el nuevo grupo y calcular su distancia a los demas
         nuevo = siguiente
         siguiente += 1
-        tamano[nuevo] = tamano[a] + tamano[b]
+        tamano[nuevo] = tamano[a] + tamano[b]   # el grupo nuevo suma los tamaños
         for k in activos:
             if k != a and k != b:
                 d_ka = dist[(min(k, a), max(k, a))]
                 d_kb = dist[(min(k, b), max(k, b))]
-                dist[(k, nuevo)] = nueva_distancia(metodo, d_ka, d_kb, tamano[a], tamano[b])
+                dist[(k, nuevo)] = nueva_distancia(metodo, d_ka, d_kb, tamano[a], tamano[b])    # distancia del grupo nuevo a los demás
         activos.remove(a)
         activos.remove(b)
         activos.append(nuevo)
-        uniones.append((a, b, mejor_d, tamano[nuevo]))
+        uniones.append((a, b, mejor_d, tamano[nuevo]))    # guardo la unión para dibujar el árbol
     return uniones
 
 
@@ -118,7 +118,7 @@ def distancias_cofeneticas(uniones, n):
         hb = hojas_de(b, uniones, n)
         for i in ha:
             for j in hb:
-                C[i][j] = d
+                C[i][j] = d    # altura a la que i y j quedan juntos
                 C[j][i] = d
     return C
 
@@ -167,7 +167,7 @@ def correlacion_cofenetica(D, uniones):
         num += (x[k] - mx) * (y[k] - my)
         sx += (x[k] - mx) ** 2
         sy += (y[k] - my) ** 2
-    return num / math.sqrt(sx * sy)
+    return num / math.sqrt(sx * sy)   # CCC: correlación entre distancias reales y del árbol
 
 
 def silueta(D, etiquetas):
@@ -190,7 +190,7 @@ def silueta(D, etiquetas):
             prom = sum(D[i][j] for j in otros) / len(otros)
             if prom < b:
                 b = prom
-        total += (b - a) / max(a, b)
+        total += (b - a) / max(a, b)  # silueta de cada abstract
     return total / n
 
 
