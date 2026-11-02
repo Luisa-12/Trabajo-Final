@@ -11,9 +11,9 @@ def tabla_prefijos(patron):
     k = 0
     for q in range(1, m):
         while k > 0 and patron[k] != patron[q]:
-            k = pi[k - 1]
+            k = pi[k - 1]       # no coincide: vuelvo al prefijo más corto que todavía sirve
         if patron[k] == patron[q]:
-            k += 1
+            k += 1               # coincide: el prefijo que se repite crece en una letra
         pi[q] = k
     return pi
 
@@ -34,7 +34,7 @@ def buscar(texto, patron, traza=False):
             comparaciones += 1
             if traza:
                 pasos.append({"i": i, "q": q, "accion": "fallo: '%s' != '%s', q = pi[%d] = %d" % (patron[q], texto[i], q - 1, pi[q - 1])})
-            q = pi[q - 1]
+            q = pi[q - 1]  # fallo en el texto: uso la tabla en vez de empezar de cero
         comparaciones += 1
         if patron[q] == texto[i]:
             q += 1
@@ -43,7 +43,7 @@ def buscar(texto, patron, traza=False):
         elif traza:
             pasos.append({"i": i, "q": q, "accion": "no coincide '%s' != '%s', avanza i" % (patron[q], texto[i])})
         if q == m:
-            posiciones.append(i - m + 1)
+            posiciones.append(i - m + 1)  # encontré el patrón completo; guardo dónde empieza
             if traza:
                 pasos.append({"i": i, "q": q, "accion": "OCURRENCIA en %d, q = pi[%d] = %d" % (i - m + 1, m - 1, pi[m - 1])})
             q = pi[q - 1]
