@@ -51,15 +51,6 @@ python -m unittest discover pruebas -v
 (Las pruebas de clustering se comparan contra `scipy` y `scikit-learn` si están instalados;
 si no, se omiten. Esas librerías **no** se usan en la aplicación.)
 
-## Despliegue en Render (gratis)
-
-1. Subir esta carpeta a un repositorio de GitHub.
-2. En https://render.com → *New* → *Blueprint* y elegir el repositorio (usa `render.yaml`).
-   También se puede crear un *Web Service* manual con:
-   - Build command: `pip install -r requirements.txt`
-   - Start command: `gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120`
-3. Render entrega una URL pública del tipo `https://bibliometria-algoritmos.onrender.com`.
-   En el plan gratuito el servicio se duerme tras 15 minutos sin uso; la primera visita tarda ~1 minuto.
 
 ## Regenerar los datos
 
